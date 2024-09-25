@@ -1,0 +1,27 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Import/Export</title>
+</head>
+<body>
+    <h1>CSV Import/Export</h1>
+
+    <!-- Form for importing CSV -->
+    <h2>Import CSV</h2>
+    <form action="/api/csv/import" method="POST" enctype="multipart/form-data">
+        <label for="file">Choose CSV file:</label>
+        <input type="file" id="file" name="file" accept=".csv" required>
+        <button type="submit">Import</button>
+    </form>
+
+    <!-- Button for exporting CSV -->
+    <h2>Export CSV</h2>
+    <form action="/api/csv/export" method="GET">
+        <button type="submit">Export CSV</button>
+    </form>
+</body>
+</html>
