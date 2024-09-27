@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,22 +5,85 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSV Import/Export</title>
+    <script>
+        // Biến để lưu entity đã chọn
+        let selectedEntity = '';
+
+        // Function to fetch the entity names and populate the dropdown
+        function fetchEntityNames() {
+            // Gọi API lấy danh sách entity
+            fetch('/api/csv/get-list-entity')
+                .then(response => {
+                    // Kiểm tra nếu response thành công
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const entityDropdown = document.getElementById('entity-dropdown');
+                    entityDropdown.innerHTML = ''; // Xóa các tùy chọn cũ
+
+                    // Thêm tùy chọn mặc định
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = "";
+                    defaultOption.textContent = "Select an entity";
+                    entityDropdown.appendChild(defaultOption);
+
+                    // Thêm từng entity vào dropdown
+                    data.forEach(entity => {
+                        const option = document.createElement('option');
+                        option.value = entity;
+                        option.textContent = entity;
+                        entityDropdown.appendChild(option);
+                    });
+
+                    // Xử lý sự kiện khi người dùng chọn một entity
+                    entityDropdown.addEventListener('change', function() {
+                        selectedEntity = entityDropdown.value; // Lưu giá trị entity đã chọn
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching entity names:', error);
+                    alert('Unable to fetch entities. Please try again later.');
+                });
+        }
+
+        // Gọi hàm fetchEntityNames khi trang được tải
+        window.onload = function() {
+            fetchEntityNames();
+        };
+    </script>
 </head>
 <body>
-    <h1>CSV Import/Export</h1>
+<h1>CSV Import/Export</h1>
 
-    <!-- Form for importing CSV -->
-    <h2>Import CSV</h2>
-    <form action="/api/csv/import" method="POST" enctype="multipart/form-data">
-        <label for="file">Choose CSV file:</label>
-        <input type="file" id="file" name="file" accept=".csv" required>
-        <button type="submit">Import</button>
-    </form>
+<!-- Form for importing CSV -->
+<h2>Import CSV</h2>
+<form id="csvImportForm" action="/api/csv/import" method="POST" enctype="multipart/form-data">
+    <label for="file">Choose CSV file:</label>
+    <input type="file" id="file" name="file" accept=".csv" required>
+    <br>
+    <label for="entity-dropdown">Select Entity:</label>
+    <select id="entity-dropdown" name="entity" required>
+        <!-- Options will be populated here via JavaScript -->
+    </select>
+    <br>
+    <input type="hidden" id="selectedEntityInput" name="selectedEntity" value="">
+    <button type="submit">Import</button>
+</form>
 
-    <!-- Button for exporting CSV -->
-    <h2>Export CSV</h2>
-    <form action="/api/csv/export" method="GET">
-        <button type="submit">Export CSV</button>
-    </form>
+<!-- Button for exporting CSV -->
+<h2>Export CSV</h2>
+<form action="/api/csv/export" method="GET">
+    <button type="submit">Export CSV</button>
+</form>
+
+<script>
+    // Cập nhật entity đã chọn trước khi form submit
+    document.getElementById('csvImportForm').addEventListener('submit', function(e) {
+        document.getElementById('selectedEntityInput').value = selectedEntity; // Gán giá trị entity vào hidden input
+    });
+</script>
 </body>
 </html>

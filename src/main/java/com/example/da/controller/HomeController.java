@@ -8,6 +8,6 @@ public class HomeController {
 
     @GetMapping("/")
     public String home() {
-        return "index"; // Trả về file index.jsp trong thư mục WEB-INF/views/
+        return "index";
     }
 }
